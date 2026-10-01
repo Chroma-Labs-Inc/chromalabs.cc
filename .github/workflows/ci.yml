@@ -17,5 +17,5 @@ jobs:
       - name: Verify Web Layout
         run: |
           test -d Production
-          test -d Testing
+          test -d chromalabs
           echo "Chromalabs.cc layout verified."
