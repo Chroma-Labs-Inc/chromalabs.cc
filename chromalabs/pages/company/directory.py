@@ -70,7 +70,7 @@ def directory() -> rx.Component:
                         "Directs corporate governance, intellectual property compliance, and strategic administration across Chroma Labs' operations and sovereign defense contracts.",
                     ),
                     grid_template_columns=["1fr", "repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(4, 1fr)"],
-                    spacing=["2", "3"],
+                    spacing="3",
                     width="100%",
                     max_width="1220px",
                     class_name="animate-fade-up delay-200",
@@ -95,7 +95,7 @@ def directory() -> rx.Component:
                         linkedin="https://www.linkedin.com/in/houston-k-15317799/"
                     ),
                     grid_template_columns=["1fr", "repeat(2, 1fr)"],
-                    spacing=["2", "3"],
+                    spacing="3",
                     width="100%",
                     max_width="750px",
                     class_name="animate-fade-up delay-300"
