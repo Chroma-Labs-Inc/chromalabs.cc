@@ -91,7 +91,7 @@ def directory() -> rx.Component:
                     staff_card(
                         "Houston Keene", 
                         "Legislative, Policy & Regulatory Strategy", 
-                        "Founder of Keen Communications LLC, former Congressional Staffer and Capitol Hill correspondent. Advises on federal engagement and ITAR/EAR regulatory compliance.",
+                        "Founder of Keene Communications LLC, former Congressional Staffer and Capitol Hill correspondent. Advises on federal engagement and ITAR/EAR regulatory compliance.",
                         linkedin="https://www.linkedin.com/in/houston-k-15317799/"
                     ),
                     grid_template_columns=["1fr", "repeat(2, 1fr)"],

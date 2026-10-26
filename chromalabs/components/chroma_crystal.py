@@ -383,8 +383,8 @@ def chroma_crystal() -> rx.Component:
         justify_content="center",
         align_items="center",
         width="100%",
-        height=["135px", "160px", "190px"],
-        margin_bottom=["18px", "12px", "0px"],
+        height=["170px", "180px", "190px"],
+        margin_bottom=["16px", "10px", "0px"],
         position="relative",
         z_index="10",
     )
