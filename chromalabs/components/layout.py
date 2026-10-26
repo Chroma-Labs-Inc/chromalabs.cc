@@ -3,7 +3,7 @@ import reflex as rx
 from .navbar import navbar
 from .footer import footer
 
-GRID_ANIMATION_JS = """
+GRID_ANIMATION_JS = r"""
 if (!window.__chromaCanvasInitialized) {
     window.__chromaCanvasInitialized = true;
     
@@ -27,23 +27,88 @@ if (!window.__chromaCanvasInitialized) {
         const SPEED = 2.5;
         let threads = [];
         
+        const PALETTE = [
+            { stroke: "212, 175, 55", glow: "#DFBC61" }, // Gold
+            { stroke: "56, 189, 248", glow: "#38BDF8" }, // Electric Cyan
+            { stroke: "245, 158, 11", glow: "#F59E0B" }, // Amber
+            { stroke: "192, 132, 252", glow: "#C084FC" }, // Lilac
+        ];
+
+        // Layer 1: Distant micro-dust specks
+        const DUST_COUNT = 35;
+        let dust = [];
+        function initDust() {
+            dust = [];
+            for (let i = 0; i < DUST_COUNT; i++) {
+                dust.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.12,
+                    vy: -0.06 - Math.random() * 0.15,
+                    r: 0.5 + Math.random() * 0.7,
+                    alpha: 0.15 + Math.random() * 0.35,
+                    glow: Math.random() > 0.45 ? "#DFBC61" : (Math.random() > 0.5 ? "#38BDF8" : "#C084FC")
+                });
+            }
+        }
+
+        // Layer 3: Foreground Camera Focal Bokeh Orbs (soft out-of-focus optics)
+        const BOKEH_COUNT = 8;
+        let bokehOrbs = [];
+        const BOKEH_COLORS = [
+            "rgba(56, 189, 248, 0.08)",   // Cyan
+            "rgba(223, 188, 97, 0.08)",   // Gold
+            "rgba(192, 132, 252, 0.07)",  // Lilac
+            "rgba(245, 158, 11, 0.07)"    // Amber
+        ];
+
+        function initBokeh() {
+            bokehOrbs = [];
+            for (let i = 0; i < BOKEH_COUNT; i++) {
+                bokehOrbs.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.20,
+                    vy: -0.08 - Math.random() * 0.18,
+                    r: 22 + Math.random() * 28,
+                    color: BOKEH_COLORS[i % BOKEH_COLORS.length]
+                });
+            }
+        }
+
+        initDust();
+        initBokeh();
+        
         function drawGrid() {
-            ctx.strokeStyle = "rgba(212, 175, 55, 0.08)";
-            ctx.lineWidth = 1;
-            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height * 0.42;
+            const maxDist = Math.hypot(canvas.width, canvas.height) * 0.65;
+
+            // Radial Occlusion: grid is crisper near hero, softly falls off toward edges
             const offsetX = (canvas.width / 2) % GRID_SIZE;
             const offsetY = (canvas.height / 2) % GRID_SIZE;
             
             for (let x = offsetX; x <= canvas.width; x += GRID_SIZE) {
+                const distRatio = Math.min(1.0, Math.abs(x - centerX) / (canvas.width * 0.6));
+                const lineOpacity = 0.095 - distRatio * 0.045;
+                ctx.strokeStyle = `rgba(212, 175, 55, ${lineOpacity.toFixed(3)})`;
+                ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
             }
             for (let y = offsetY; y <= canvas.height; y += GRID_SIZE) {
+                const distRatio = Math.min(1.0, Math.abs(y - centerY) / (canvas.height * 0.6));
+                const lineOpacity = 0.095 - distRatio * 0.045;
+                ctx.strokeStyle = `rgba(212, 175, 55, ${lineOpacity.toFixed(3)})`;
+                ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
             }
             
-            ctx.strokeStyle = "rgba(212, 175, 55, 0.2)";
+            // Intersection tick crosses with radial falloff
             for (let x = offsetX; x <= canvas.width; x += GRID_SIZE) {
                 for (let y = offsetY; y <= canvas.height; y += GRID_SIZE) {
+                    const d = Math.hypot(x - centerX, y - centerY);
+                    const crossOpacity = Math.max(0.06, 0.25 * (1.0 - d / maxDist));
+                    ctx.strokeStyle = `rgba(212, 175, 55, ${crossOpacity.toFixed(3)})`;
                     ctx.beginPath();
                     ctx.moveTo(x - 4, y); ctx.lineTo(x + 4, y);
                     ctx.moveTo(x, y - 4); ctx.lineTo(x, y + 4);
@@ -52,19 +117,21 @@ if (!window.__chromaCanvasInitialized) {
             }
         }
         
-        function spawnThread(x, y, isBranch = false) {
+        function spawnThread(x, y, isBranch = false, inheritedColor = null) {
             if (threads.length > 50) return;
             
             let startX = x !== undefined ? x : Math.floor(Math.random() * (canvas.width / GRID_SIZE)) * GRID_SIZE + ((canvas.width / 2) % GRID_SIZE);
             let startY = y !== undefined ? y : Math.floor(Math.random() * (canvas.height / GRID_SIZE)) * GRID_SIZE + ((canvas.height / 2) % GRID_SIZE);
-            
+            let colorScheme = inheritedColor || PALETTE[Math.floor(Math.random() * PALETTE.length)];
+
             threads.push({
                 x: startX, y: startY,
                 path: [{x: startX, y: startY}],
                 maxLength: 3 + Math.random() * 6,
                 life: 0,
                 maxLife: 200 + Math.random() * 200,
-                moving: false
+                moving: false,
+                colorScheme: colorScheme
             });
         }
 
@@ -81,11 +148,30 @@ if (!window.__chromaCanvasInitialized) {
                 canvas = currentCanvas;
                 ctx = canvas.getContext("2d");
                 resize();
+                initDust();
+                initBokeh();
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             drawGrid();
+
+            // Layer 1: Distant Ambient Spatial Dust
+            for (let i = 0; i < dust.length; i++) {
+                let d = dust[i];
+                d.x += d.vx;
+                d.y += d.vy;
+                if (d.y < 0) { d.y = canvas.height; d.x = Math.random() * canvas.width; }
+                if (d.x < 0) d.x = canvas.width;
+                if (d.x > canvas.width) d.x = 0;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                ctx.fillStyle = d.glow;
+                ctx.globalAlpha = d.alpha;
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
             
             if (threads.length < 15) {
                 spawnThread();
@@ -129,7 +215,7 @@ if (!window.__chromaCanvasInitialized) {
                     t.lastDir = dirs.indexOf(selected);
                     
                     if (Math.random() < 0.03) {
-                        spawnThread(t.x, t.y, true);
+                        spawnThread(t.x, t.y, true, t.colorScheme);
                     }
                 }
                 
@@ -149,30 +235,52 @@ if (!window.__chromaCanvasInitialized) {
                     ctx.lineCap = "round";
                     ctx.lineJoin = "round";
                     
+                    const col = t.colorScheme || PALETTE[0];
+
                     for (let j = 1; j < points.length; j++) {
                         const p1 = points[j - 1];
                         const p2 = points[j];
                         
-                        const segmentOpacity = Math.pow(j / points.length, 2) * lifeOpacity * 0.35; 
+                        const segmentOpacity = Math.pow(j / points.length, 2) * lifeOpacity * 0.40; 
                         
                         ctx.beginPath();
                         ctx.moveTo(p1.x, p1.y);
                         ctx.lineTo(p2.x, p2.y);
                         
-                        ctx.strokeStyle = `rgba(212, 175, 55, ${segmentOpacity})`;
+                        ctx.strokeStyle = `rgba(${col.stroke}, ${segmentOpacity})`;
                         ctx.lineWidth = 2.0;
                         ctx.stroke();
                     }
                     
-                    const headOpacity = lifeOpacity * 0.6;
+                    const headOpacity = lifeOpacity * 0.75;
                     ctx.beginPath();
-                    ctx.arc(t.x, t.y, 2, 0, Math.PI * 2);
+                    ctx.arc(t.x, t.y, 2.5, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255, 255, 255, ${headOpacity})`;
-                    ctx.shadowBlur = 6;
-                    ctx.shadowColor = `rgba(212, 175, 55, ${headOpacity})`;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = col.glow;
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 }
+            }
+
+            // Layer 3: Foreground Camera Focal Bokeh Orbs
+            for (let i = 0; i < bokehOrbs.length; i++) {
+                let b = bokehOrbs[i];
+                b.x += b.vx;
+                b.y += b.vy;
+                if (b.y < -b.r * 2) { b.y = canvas.height + b.r; b.x = Math.random() * canvas.width; }
+                if (b.x < -b.r * 2) b.x = canvas.width + b.r;
+                if (b.x > canvas.width + b.r * 2) b.x = -b.r;
+
+                const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+                grad.addColorStop(0, b.color);
+                grad.addColorStop(0.5, b.color.replace(/[\d\.]+\)$/, "0.03)"));
+                grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fill();
             }
             
             requestAnimationFrame(animate);
@@ -188,22 +296,22 @@ def base_layout(content: rx.Component) -> rx.Component:
     return rx.box(
         rx.box(
             position="fixed", top="0", left="0", width="100vw", height="100vh", z_index="-1",
-            bg="#0A0A0C",
+            bg="#07070A",
         ),
         rx.box(
-            position="fixed", top="15%", left="50%", transform="translateX(-50%)", width="60vw", height="60vw",
-            background="radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 60%)",
-            z_index="1", filter="blur(80px)", border_radius="50%", pointer_events="none",
+            position="fixed", top="12%", left="50%", transform="translateX(-50%)", width="65vw", height="65vw",
+            background="radial-gradient(circle, rgba(223, 188, 97, 0.07) 0%, transparent 65%)",
+            z_index="1", filter="blur(90px)", border_radius="50%", pointer_events="none",
         ),
         rx.box(
-            position="fixed", top="40%", left="-10%", width="50vw", height="50vw",
-            background="radial-gradient(circle, rgba(138, 3, 3, 0.12) 0%, transparent 70%)",
-            z_index="1", filter="blur(100px)", border_radius="50%", pointer_events="none",
+            position="fixed", top="35%", left="-10%", width="55vw", height="55vw",
+            background="radial-gradient(circle, rgba(168, 85, 247, 0.05) 0%, transparent 70%)",
+            z_index="1", filter="blur(110px)", border_radius="50%", pointer_events="none",
         ),
         rx.box(
             position="fixed", bottom="-10%", right="-10%", width="60vw", height="60vw",
-            background="radial-gradient(circle, rgba(255, 69, 0, 0.08) 0%, transparent 70%)",
-            z_index="1", filter="blur(100px)", border_radius="50%", pointer_events="none",
+            background="radial-gradient(circle, rgba(6, 182, 212, 0.04) 0%, transparent 70%)",
+            z_index="1", filter="blur(110px)", border_radius="50%", pointer_events="none",
         ),
         rx.el.canvas(
             id="lambdaBackground", 
@@ -211,22 +319,31 @@ def base_layout(content: rx.Component) -> rx.Component:
         ),
         rx.script(GRID_ANIMATION_JS),
 
-        rx.vstack(
+        rx.box(
             navbar(),
             rx.box(
                 content,
-                flex_grow="1",
                 width="100%",
+                height="calc(100vh - 112px)",
+                max_height="calc(100vh - 112px)",
+                margin_top="56px",
                 position="relative",
                 z_index="10",
                 display="flex",
                 flex_direction="column",
-                padding_top="100px",
+                align_items="center",
+                justify_content="center",
+                overflow_y=["auto", "auto", "hidden", "hidden"],
+                overflow_x="hidden",
             ),
             footer(),
-            min_height="100vh",
             width="100%",
-            spacing="0",
+            height="100vh",
+            max_height="100vh",
+            display="flex",
+            flex_direction="column",
+            overflow="hidden",
+            position="relative",
         ),
         background="transparent", color="white", font_family="Inter, sans-serif",
         position="relative"

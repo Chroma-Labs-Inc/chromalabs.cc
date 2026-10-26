@@ -1,4 +1,4 @@
-﻿import reflex as rx
+import reflex as rx
 
 from chromalabs.pages.index import index
 from chromalabs.pages.capabilities.capabilities import capabilities
@@ -58,14 +58,18 @@ app = rx.App(
 )
 
 from chromalabs.pages.capabilities.ai import ai
-from chromalabs.pages.capabilities.hpc import hpc
-from chromalabs.pages.capabilities.government import government
+from chromalabs.pages.capabilities.thermodynamics import thermodynamics
+from chromalabs.pages.capabilities.defense import defense
+from chromalabs.pages.capabilities.robotics import robotics
 
-app.add_page(index, route="/", title="Higher Dimensional HPC | Chroma Labs", image="/logo_glyph.png")
+app.add_page(index, route="/", title="Chroma Labs | Next-Generation Compute", image="/logo_glyph.png")
 app.add_page(capabilities, route="/capabilities", title="Capabilities | Chroma Labs", image="/logo_glyph.png")
-app.add_page(ai, route="/capabilities/ai", title="Exascale AI | Chroma Labs", image="/logo_glyph.png")
-app.add_page(hpc, route="/capabilities/hpc", title="HPC | Chroma Labs", image="/logo_glyph.png")
-app.add_page(government, route="/capabilities/government", title="Defense & Gov | Chroma Labs", image="/logo_glyph.png")
+app.add_page(thermodynamics, route="/capabilities/thermodynamics", title="Thermodynamic Scaling | Chroma Labs", image="/logo_glyph.png")
+app.add_page(thermodynamics, route="/capabilities/hpc", title="High Performance Computing | Chroma Labs", image="/logo_glyph.png")
+app.add_page(ai, route="/capabilities/ai", title="Artificial Intelligence | Chroma Labs", image="/logo_glyph.png")
+app.add_page(defense, route="/capabilities/defense", title="Defense & Security | Chroma Labs", image="/logo_glyph.png")
+app.add_page(defense, route="/capabilities/government", title="Defense & Security | Chroma Labs", image="/logo_glyph.png")
+app.add_page(robotics, route="/capabilities/robotics", title="Autonomous Robotics | Chroma Labs", image="/logo_glyph.png")
 app.add_page(log, route="/research/log", title="Research Log | Chroma Labs", image="/logo_glyph.png")
 app.add_page(papers, route="/research/papers", title="Published Papers | Chroma Labs", image="/logo_glyph.png")
 app.add_page(mission, route="/company/mission", title="Mission | Chroma Labs", image="/logo_glyph.png")
@@ -73,5 +77,5 @@ app.add_page(careers, route="/company/careers", title="Careers | Chroma Labs", i
 app.add_page(directory, route="/company/directory", title="Staff Directory | Chroma Labs", image="/logo_glyph.png")
 from chromalabs.pages.company.contact import ContactState
 app.add_page(contact, route="/contact", title="Contact | Chroma Labs", image="/logo_glyph.png", on_load=ContactState.load_topic)
-app.add_page(developer, route="/developer", title="Developer | Chroma Labs", image="/logo_glyph.png")
+app.add_page(developer, route="/developer", title="Developer Portal | Chroma Labs", image="/logo_glyph.png")
 

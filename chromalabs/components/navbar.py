@@ -1,4 +1,5 @@
-﻿import reflex as rx
+import reflex as rx
+from chromalabs.components.chroma_crystal import chroma_nav_crystal
 
 def menu_item(text: str, url: str) -> rx.Component:
     return rx.box(
@@ -52,9 +53,11 @@ def navbar_dropdown(title: str, items: list[tuple[str, str]]) -> rx.Component:
 def navbar() -> rx.Component:
     desktop_nav = rx.hstack(
         navbar_dropdown("CAPABILITIES", [
-            ("AI", "/capabilities/ai"),
-            ("HPC", "/capabilities/hpc"),
-            ("Government", "/capabilities/government"),
+            ("Capabilities Overview", "/capabilities"),
+            ("Thermodynamic Scaling", "/capabilities/thermodynamics"),
+            ("Artificial Intelligence", "/capabilities/ai"),
+            ("Defense & Security", "/capabilities/defense"),
+            ("Autonomous Robotics", "/capabilities/robotics"),
         ]),
         navbar_dropdown("RESEARCH", [
             ("Research Log", "/research/log"),
@@ -83,11 +86,12 @@ def navbar() -> rx.Component:
                 },
                 height="auto",
             ),
-            href="/developer", _hover={"text_decoration": "none"}
+            href="/developer", _hover={"text_decoration": "none"},
+            margin_right=["0px", "4px", "12px", "16px"],
         ),
         display=["none", "none", "flex", "flex"],
         align_items="center",
-        spacing="4"
+        spacing="4",
     )
 
     mobile_nav = rx.box(
@@ -97,9 +101,11 @@ def navbar() -> rx.Component:
             ),
             rx.menu.content(
                 rx.text("CAPABILITIES", padding="8px 12px", color="#DFBC61", font_size="0.75rem", font_weight="bold", letter_spacing="0.1em"),
-                rx.menu.item(rx.link("AI", href="/capabilities/ai", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
-                rx.menu.item(rx.link("HPC", href="/capabilities/hpc", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
-                rx.menu.item(rx.link("Government", href="/capabilities/government", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
+                rx.menu.item(rx.link("Capabilities Overview", href="/capabilities", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
+                rx.menu.item(rx.link("Thermodynamic Scaling", href="/capabilities/thermodynamics", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
+                rx.menu.item(rx.link("Artificial Intelligence", href="/capabilities/ai", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
+                rx.menu.item(rx.link("Defense & Security", href="/capabilities/defense", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
+                rx.menu.item(rx.link("Autonomous Robotics", href="/capabilities/robotics", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
                 rx.menu.separator(),
                 rx.text("RESEARCH", padding="8px 12px", color="#DFBC61", font_size="0.75rem", font_weight="bold", letter_spacing="0.1em"),
                 rx.menu.item(rx.link("Research Log", href="/research/log", width="100%", display="block", color="inherit", _hover={"text_decoration": "none"})),
@@ -120,21 +126,45 @@ def navbar() -> rx.Component:
         display=["block", "block", "none", "none"]
     )
 
-    return rx.hstack(
-        rx.link(
-            rx.image(src="/logo.svg?v=8", height="55px", width="auto"),
-            href="/", margin_left=["4px", "16px"], _hover={"text_decoration": "none"}
+    return rx.box(
+        rx.hstack(
+            rx.link(
+                rx.hstack(
+                    chroma_nav_crystal(),
+                    rx.hstack(
+                        rx.text("CHROMA", font_weight="800", font_size=["1.05rem", "1.15rem"], color="white", letter_spacing="0.12em"),
+                        rx.text("LABS", font_weight="400", font_size=["1.05rem", "1.15rem"], color="#DFBC61", letter_spacing="0.12em"),
+                        spacing="2",
+                        align_items="center",
+                    ),
+                    align_items="center",
+                    spacing="3",
+                ),
+                href="/", _hover={"text_decoration": "none"}
+            ),
+            rx.spacer(),
+            desktop_nav,
+            mobile_nav,
+            width="100%",
+            padding_x=["16px", "24px", "36px", "48px"],
+            height="56px",
+            align_items="center",
         ),
-        rx.spacer(),
-        desktop_nav,
-        mobile_nav,
+        rx.box(
+            position="absolute",
+            bottom="0",
+            left="0",
+            width="100%",
+            height="1px",
+            background="linear-gradient(90deg, rgba(223, 188, 97, 0) 0%, rgba(223, 188, 97, 0.15) 20%, rgba(223, 188, 97, 0.75) 50%, rgba(223, 188, 97, 0.15) 80%, rgba(223, 188, 97, 0) 100%)",
+            box_shadow="0 0 16px rgba(223, 188, 97, 0.45), 0 0 4px rgba(223, 188, 97, 0.7)",
+            pointer_events="none",
+        ),
         width="100%",
-        padding_x=["4", "8", "16"],
-        height="100px",
-        align_items="center",
+        height="56px",
         position="fixed",
         top="0",
-        border_bottom="1px solid rgba(255, 255, 255, 0.05)",
+        left="0",
         background="rgba(0, 0, 0, 0.6)",
         backdrop_filter="blur(24px)",
         z_index="50",

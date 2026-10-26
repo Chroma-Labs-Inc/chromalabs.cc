@@ -1,31 +1,31 @@
-﻿import reflex as rx
+import reflex as rx
 from chromalabs.components.layout import base_layout
 
 def staff_card(name: str, role: str, spec: str, github: str = "", linkedin: str = "") -> rx.Component:
     links = []
     if github:
-        links.append(rx.link(rx.text("GITHUB", font_size="0.75rem", font_family="JetBrains Mono, monospace", font_weight="bold", color="slate.10", _hover={"color": "#DFBC61"}), href=github, is_external=True))
+        links.append(rx.link(rx.text("GITHUB", font_size="0.65rem", font_family="JetBrains Mono, monospace", font_weight="bold", color="slate.10", _hover={"color": "#DFBC61"}), href=github, is_external=True))
     if linkedin:
-        links.append(rx.link(rx.text("LINKEDIN", font_size="0.75rem", font_family="JetBrains Mono, monospace", font_weight="bold", color="slate.10", _hover={"color": "#DFBC61"}), href=linkedin, is_external=True))
+        links.append(rx.link(rx.text("LINKEDIN", font_size="0.65rem", font_family="JetBrains Mono, monospace", font_weight="bold", color="slate.10", _hover={"color": "#DFBC61"}), href=linkedin, is_external=True))
         
     return rx.box(
         rx.vstack(
-            rx.box(width="40px", height="4px", bg="#DFBC61", margin_bottom="2"),
-            rx.text(name, color="white", font_size="1.25rem", font_weight="700", line_height="1.2"),
-            rx.text(role, color="slate.11", font_size="0.9rem", font_family="JetBrains Mono, monospace", margin_top="1"),
-            rx.text(spec, color="slate.9", font_size="0.8rem", margin_top="4", line_height="1.5", flex_grow="1"),
-            rx.hstack(*links, margin_top="4", spacing="4") if links else rx.box(),
+            rx.box(width="28px", height="2px", bg="#DFBC61", margin_bottom="1"),
+            rx.text(name, color="white", font_size="1.05rem", font_weight="700", line_height="1.2"),
+            rx.text(role, color="#DFBC61", font_size="0.75rem", font_family="JetBrains Mono, monospace", margin_top="0"),
+            rx.text(spec, color="slate.11", font_size="0.78rem", margin_top="2", line_height="1.45", flex_grow="1"),
+            rx.hstack(*links, margin_top="2", spacing="3") if links else rx.box(),
             align_items="flex-start",
             height="100%",
         ),
-        bg="rgba(15,15,15,0.6)",
-        border="1px solid rgba(255,255,255,0.05)",
-        border_radius="4px",
-        padding="32px 24px",
+        bg="rgba(10, 10, 14, 0.6)",
+        border="1px solid rgba(255, 255, 255, 0.06)",
+        border_radius="6px",
+        padding="16px 18px",
         width="100%",
         height="100%",
         transition="all 0.2s ease",
-        _hover={"bg": "rgba(25,25,25,0.8)", "border": "1px solid rgba(255,255,255,0.1)", "transform": "translateY(-2px)"},
+        _hover={"bg": "rgba(18, 18, 24, 0.8)", "border": "1px solid rgba(223, 188, 97, 0.3)", "transform": "translateY(-2px)"},
     )
 
 def directory() -> rx.Component:
@@ -33,93 +33,82 @@ def directory() -> rx.Component:
         rx.box(
             rx.vstack(
                 rx.text(
-                    "EXECUTIVE BOARD",
-                    font_size="0.8rem", weight="bold", color="#DFBC61", letter_spacing="0.15em",
-                    class_name="animate-fade-up", text_align="center"
+                    "EXECUTIVE CADRE & ADVISORY COUNCIL",
+                    font_size="0.75rem", weight="bold", color="#DFBC61", letter_spacing="0.15em",
+                    class_name="animate-fade-up", text_align="center", font_family="JetBrains Mono, monospace"
                 ),
                 rx.text(
-                    "The Architecture Team.", 
-                    font_size=["3rem", "4rem", "5rem"], weight="bold", letter_spacing="-0.04em", line_height="1.0",
+                    "Leadership & Strategic Direction.", 
+                    font_size=["1.8rem", "2.2rem", "2.6rem"], weight="bold", letter_spacing="-0.03em", line_height="1.1",
                     color="white", font_family="'EB Garamond', 'Playfair Display', serif",
-                    class_name="animate-fade-up delay-100", margin_bottom="4", text_align="center"
-                ),
-                rx.text(
-                    "The founders and executive board pioneering the next dimensional layer of compute.",
-                    font_size="1.25rem", color="slate.11", max_width="700px", text_align="center", margin_bottom="12", line_height="1.6",
-                    class_name="animate-fade-up delay-200"
+                    class_name="animate-fade-up delay-100", margin_bottom="3", text_align="center"
                 ),
                 rx.grid(
                     staff_card(
                         "Michael Reser", 
-                        "Founder, CEO, CTO, & President", 
-                        "Founder, Chief Executive Officer, and Chief Technology Officer. As the principal architect of Chroma Labs' foundational physics, Reser pioneered the underlying research transitioning planar compute into volumetric geometric structures. His work operates at the bleeding edge of substrate engineering and artificial intelligence, driving the deployment of the world's first post-digital supercomputing architecture.",
+                        "Founder, CEO, CTO & Systems Architect", 
+                        "US Army Veteran and principal architect of Chroma Labs' computing physics. With foundational roots in robotics programs, STEM, and applied algorithms, Reser engineered the underlying mathematical frameworks and Lean 4 formal verification proofs de-risking the architecture.",
                         github="https://github.com/I-Am-Finite",
                         linkedin="https://www.linkedin.com/in/michaelreser/"
                     ),
                     staff_card(
                         "Bryan C. Coward", 
-                        "Co-Founder, VP, & CFO", 
-                        "Co-Founder, Vice President, and Chief Financial Officer. Coward directs the global financial architecture and executive operations necessary to scale Chroma's physical infrastructure. By aligning hyper-scale capital deployment with aggressive hardware rollout schedules, he ensures the rapid commercialization of post-digital substrates across hyperscale enterprise, advanced consumer hardware, and global technology sectors.",
+                        "Co-Founder, VP & Quantitative Architecture", 
+                        "Quantitative systems and infrastructure architect. Coward directs global operations and enterprise financial architecture scaling Chroma's infrastructure.",
                         github="https://github.com/bmasterc",
                         linkedin="https://www.linkedin.com/in/cowardbryan/"
                     ),
                     staff_card(
                         "Connor Dudek", 
                         "Chief Marketing Officer (CMO)", 
-                        "Chief Marketing Officer. Drawing on an extensive background directing high-velocity brand architecture within the global esports and gaming sectors, Dudek engineers Chroma's public narrative. He translates profound, deep-tech paradigms into a cohesive, aggressive market posture, bridging the gap between bleeding-edge R&D, advanced consumer wearables, and mass-market integration.",
+                        "Directs corporate positioning, high-velocity brand architecture, strategic communications, and institutional market alignment across global technology sectors.",
                         linkedin="https://www.linkedin.com/in/connordudek/"
                     ),
                     staff_card(
                         "Megan F. Teague", 
                         "Secretary of the Board", 
-                        "Teague orchestrates the complex corporate governance, intellectual property compliance, and strategic administration required for Chroma Labs' hyperscale operations. As the lab transitions from deep-tech R&D to global commercialization, she ensures that both enterprise contracts and mass-market consumer deployments are executed with absolute structural integrity.",
+                        "Directs corporate governance, intellectual property compliance, and strategic administration across Chroma Labs' operations and sovereign defense contracts.",
                     ),
-                    grid_template_columns=["1fr", "1fr", "repeat(2, 1fr)"],
-                    spacing="6",
+                    grid_template_columns=["1fr", "repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(4, 1fr)"],
+                    spacing="3",
                     width="100%",
-                    max_width="1000px",
-                    class_name="animate-fade-up delay-300",
-                    margin_bottom="24"
+                    max_width="1220px",
+                    class_name="animate-fade-up delay-200",
+                    margin_bottom="3"
                 ),
                 rx.text(
-                    "ADVISORY BOARD",
-                    font_size="0.8rem", weight="bold", color="#DFBC61", letter_spacing="0.15em",
-                    class_name="animate-fade-up delay-300", text_align="center"
-                ),
-                rx.text(
-                    "Strategic Guidance.", 
-                    font_size=["2rem", "2.5rem", "3rem"], weight="bold", letter_spacing="-0.04em", line_height="1.0",
-                    color="white", font_family="'EB Garamond', 'Playfair Display', serif",
-                    class_name="animate-fade-up delay-300", margin_bottom="8", text_align="center"
+                    "ADVISORY COUNCIL",
+                    font_size="0.7rem", weight="bold", color="#DFBC61", letter_spacing="0.12em",
+                    class_name="animate-fade-up delay-200", text_align="center", font_family="JetBrains Mono, monospace", margin_bottom="1"
                 ),
                 rx.grid(
                     staff_card(
                         "Dr. David Lary", 
-                        "Advisory Board Member", 
-                        "Professor of Physics at UT Dallas and Director of the MINTS (Multi-Scale Integrated Intelligent Interactive Sensing) Lab. Dr. Lary brings decades of expertise in autonomous telemetry, machine learning, and atmospheric physics to ground Chroma's theoretical substrates into real-world architectures.",
+                        "Scientific Validation & Defense Liaison", 
+                        "Professor of Physics at UT Dallas and Director of the MINTS Lab (NASA AutoChem, SOFWERX). Dr. Lary advises on physical and thermodynamic validation across defense programs.",
                         linkedin="https://www.linkedin.com/in/davidlary/"
                     ),
                     staff_card(
                         "Houston Keene", 
-                        "Advisory Board Member", 
-                        "Founder of Keen Communications LLC and former political reporter. Keene provides elite strategic guidance on public sector engagement, defense policy positioning, and translating highly classified technological paradigms into compelling legislative narratives.",
+                        "Legislative, Policy & Regulatory Strategy", 
+                        "Founder of Keen Communications LLC, former Congressional Staffer and Capitol Hill correspondent. Advises on federal engagement and ITAR/EAR regulatory compliance.",
                         linkedin="https://www.linkedin.com/in/houston-k-15317799/"
                     ),
-                    grid_template_columns=["1fr", "1fr", "repeat(2, 1fr)"],
-                    spacing="6",
+                    grid_template_columns=["1fr", "repeat(2, 1fr)"],
+                    spacing="3",
                     width="100%",
-                    max_width="1000px",
+                    max_width="750px",
                     class_name="animate-fade-up delay-300"
                 ),
                 width="100%",
-                max_width="1200px",
-                align_items="center", justify_content="center", min_height="calc(100vh - 200px)",
-                padding_y=["12", "24"],
-                padding_x=["4", "8", "12"],
+                max_width="1220px",
+                align_items="center", justify_content="center",
+                padding_x=["4", "6", "8"],
             ),
             width="100%",
-            min_height="80vh",
+            height="100%",
             display="flex",
+            align_items="center",
             justify_content="center"
         )
     )
