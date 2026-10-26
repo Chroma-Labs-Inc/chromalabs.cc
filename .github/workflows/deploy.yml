@@ -1,0 +1,129 @@
+name: Deploy Chroma Web Platform & Broadcast
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "requirements.txt"
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Setup Virtual Environment & Install Dependencies
+        run: |
+          uv venv
+          uv pip install -r requirements.txt
+
+      - name: Build Static Payload
+        run: |
+          uv run reflex export --frontend-only --no-zip
+          echo "chromalabs.cc" > .web/build/client/CNAME
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./.web/build/client
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Update gh-pages Branch
+        uses: peaceiris/actions-gh-pages@v4
+        continue-on-error: true
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./.web/build/client
+          cname: chromalabs.cc
+
+      - name: Broadcast to Discord #announcements
+        if: success()
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: |
+          python3 - << 'EOF'
+          import os, sys, json, urllib.request, datetime, subprocess
+
+          token = os.environ.get("DISCORD_BOT_TOKEN")
+          if not token:
+              print("No DISCORD_BOT_TOKEN found, skipping notification.")
+              sys.exit(0)
+
+          channel_id = "1564074740988125245" # announcements
+
+          commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip()
+          commit_msg = subprocess.check_output(["git", "log", "-1", "--pretty=%B"], text=True).strip()
+          author = subprocess.check_output(["git", "log", "-1", "--pretty=%an"], text=True).strip()
+
+          embed = {
+              "title": "🌐 Chroma Labs Website Deployed",
+              "url": "https://chromalabs.cc",
+              "color": 0xDFBC61,
+              "description": (
+                  f"The latest architectural update has successfully deployed to **[chromalabs.cc](https://chromalabs.cc)**.\n\n"
+                  f"**Deployment Summary:**\n{commit_msg}\n"
+              ),
+              "fields": [
+                  {"name": "Commit", "value": f"`{commit_hash}`", "inline": True},
+                  {"name": "Author", "value": author, "inline": True},
+                  {"name": "Live URL", "value": "[chromalabs.cc](https://chromalabs.cc)", "inline": True}
+              ],
+              "footer": {"text": "Chroma Labs, Inc. — Sovereign Computing Systems"},
+              "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
+          }
+
+          payload = {
+              "content": "@everyone",
+              "embeds": [embed],
+              "allowed_mentions": {"parse": ["everyone"]}
+          }
+
+          req = urllib.request.Request(
+              f"https://discord.com/api/v10/channels/{channel_id}/messages",
+              data=json.dumps(payload).encode("utf-8"),
+              headers={
+                  "Authorization": f"Bot {token}",
+                  "Content-Type": "application/json",
+                  "User-Agent": "DiscordBot (https://chromalabs.cc, 1.0)"
+              },
+              method="POST"
+          )
+
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  res = json.loads(resp.read().decode())
+                  print(f"Broadcasted to Discord announcements! Message ID: {res['id']}")
+          except Exception as e:
+              if hasattr(e, "read"):
+                  print("Discord API error:", e.read().decode())
+              else:
+                  print("Discord error:", e)
+          EOF
