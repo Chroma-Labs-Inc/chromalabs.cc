@@ -43,26 +43,28 @@ jobs:
           uv run reflex export --frontend-only --no-zip
           echo "chromalabs.cc" > .web/build/client/CNAME
 
+      - name: Deploy to GitHub Pages Branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./.web/build/client
+          cname: chromalabs.cc
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        continue-on-error: true
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
+        continue-on-error: true
         with:
           path: ./.web/build/client
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Update gh-pages Branch
-        uses: peaceiris/actions-gh-pages@v4
         continue-on-error: true
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./.web/build/client
-          cname: chromalabs.cc
 
       - name: Broadcast to Discord #announcements
         if: success()
