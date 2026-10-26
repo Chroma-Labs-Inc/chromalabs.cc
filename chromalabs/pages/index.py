@@ -18,7 +18,7 @@ def index() -> rx.Component:
                     color="white",
                     text_align="center",
                     class_name="animate-fade-up delay-100",
-                    margin_top=["2", "3"],
+                    margin_top=["20px", "16px", "8px", "6px"],
                     font_family="'EB Garamond', 'Playfair Display', serif",
                     text_shadow="0 6px 30px rgba(0, 0, 0, 0.9)",
                 ),

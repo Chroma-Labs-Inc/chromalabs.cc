@@ -377,23 +377,14 @@ def chroma_crystal() -> rx.Component:
         rx.el.canvas(
             id="chromaHeroCrystal",
             class_name="chroma-hero-crystal-canvas",
-            style={
-                "width": "100%",
-                "maxWidth": "280px",
-                "height": "auto",
-                "aspectRatio": "3 / 2",
-                "display": "block",
-                "margin": "0 auto",
-                "pointer_events": "none",
-                "filter": "drop-shadow(0 6px 25px rgba(0, 0, 0, 0.8))",
-            }
         ),
         rx.script(CRYSTAL_JS),
         display="flex",
         justify_content="center",
         align_items="center",
         width="100%",
-        height=["130px", "160px", "190px"],
+        height=["135px", "160px", "190px"],
+        margin_bottom=["18px", "12px", "0px"],
         position="relative",
         z_index="10",
     )
