@@ -2,8 +2,10 @@ import reflex as rx
 
 CRYSTAL_JS = """
 (function() {
-    if (window.__chromaCrystalInitialized) return;
-    window.__chromaCrystalInitialized = true;
+    if (window.__chromaCrystalRenderAll) {
+        window.__chromaCrystalRenderAll();
+        return;
+    }
 
     // Authentic Secure Client 3D Polyhedron Geometry (Tall Spire with Exact Unclipped Bounds)
     const N = 8;
@@ -64,8 +66,13 @@ CRYSTAL_JS = """
     let pulsePhase = 1.0;
 
     function renderEngine(canvas, isNav) {
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
+        if (!canvas || !canvas.getContext) return;
+        let ctx;
+        try {
+            ctx = canvas.getContext("2d");
+        } catch (e) {
+            return;
+        }
         if (!ctx) return;
 
         const dpr = window.devicePixelRatio || 2;
@@ -333,19 +340,35 @@ CRYSTAL_JS = """
         ctx.restore();
     }
 
+    window.__chromaCrystalRenderAll = function() {
+        try {
+            const heroes = document.querySelectorAll(".chroma-hero-crystal-canvas, #chromaHeroCrystal");
+            heroes.forEach(h => renderEngine(h, false));
+
+            const navs = document.querySelectorAll(".chroma-nav-crystal-canvas, #chromaNavCrystal");
+            navs.forEach(n => renderEngine(n, true));
+        } catch (e) {}
+    };
+
     function animate() {
         angle += 0.0055;
         pulsePhase += 0.015;
 
-        const hero = document.getElementById("chromaHeroCrystal");
-        const nav = document.getElementById("chromaNavCrystal");
-        if (hero) renderEngine(hero, false);
-        if (nav) renderEngine(nav, true);
+        if (window.__chromaCrystalRenderAll) {
+            window.__chromaCrystalRenderAll();
+        }
 
         requestAnimationFrame(animate);
     }
 
-    animate();
+    if (!window.__chromaCrystalLoopStarted) {
+        window.__chromaCrystalLoopStarted = true;
+        requestAnimationFrame(animate);
+    }
+
+    if (window.__chromaCrystalRenderAll) {
+        window.__chromaCrystalRenderAll();
+    }
 })();
 """
 
@@ -353,6 +376,7 @@ def chroma_crystal() -> rx.Component:
     return rx.box(
         rx.el.canvas(
             id="chromaHeroCrystal",
+            class_name="chroma-hero-crystal-canvas",
             style={
                 "width": "300px",
                 "height": "200px",
@@ -376,6 +400,7 @@ def chroma_nav_crystal() -> rx.Component:
     return rx.box(
         rx.el.canvas(
             id="chromaNavCrystal",
+            class_name="chroma-nav-crystal-canvas",
             style={
                 "width": "48px",
                 "height": "34px",
@@ -383,6 +408,7 @@ def chroma_nav_crystal() -> rx.Component:
                 "pointer_events": "none",
             }
         ),
+        rx.script(CRYSTAL_JS),
         display="inline-flex",
         align_items="center",
         justify_content="center",

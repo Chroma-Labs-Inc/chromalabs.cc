@@ -103,9 +103,7 @@ jobs:
           }
 
           payload = {
-              "content": "@everyone",
-              "embeds": [embed],
-              "allowed_mentions": {"parse": ["everyone"]}
+              "embeds": [embed]
           }
 
           req = urllib.request.Request(
