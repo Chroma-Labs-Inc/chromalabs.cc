@@ -1,21 +1,25 @@
 import reflex as rx
-import urllib.parse
 from chromalabs.components.layout import base_layout
 from chromalabs.components.buttons import primary_gold_button, secondary_white_button
 
 CONTACT_JS = """
 (function() {
+    const FORMSPREE_ENDPOINT = "https://formspree.io/f/xrpppbay";
+
     function initContact() {
         const form = document.getElementById("chromaContactForm");
         const topicInput = document.getElementById("contactTopic");
         const emailInput = document.getElementById("contactEmail");
         const companyInput = document.getElementById("contactCompany");
         const messageInput = document.getElementById("contactMessage");
+        const submitBtn = document.getElementById("contactSubmitBtn");
         const statusBox = document.getElementById("contactStatusBox");
-        const openBtn = document.getElementById("contactOpenClientBtn");
-        const copyBtn = document.getElementById("contactCopyBtn");
-        const editBtn = document.getElementById("contactEditBtn");
         const directCopyBtn = document.getElementById("directCopyBtn");
+        const statusTitle = document.getElementById("contactStatusTitle");
+        const statusMsg = document.getElementById("contactStatusMsg");
+        const statusActions = document.getElementById("contactStatusActions");
+        const copyRecordBtn = document.getElementById("contactCopyRecordBtn");
+        const resetBtn = document.getElementById("contactResetBtn");
 
         if (directCopyBtn && !directCopyBtn.__bound) {
             directCopyBtn.__bound = true;
@@ -46,10 +50,9 @@ CONTACT_JS = """
             }
         } catch (e) {}
 
-        let lastMailtoUrl = "";
-        let lastFormattedText = "";
+        let lastRecordText = "";
 
-        form.addEventListener("submit", function(e) {
+        form.addEventListener("submit", async function(e) {
             e.preventDefault();
             const topic = (topicInput ? topicInput.value : "").trim();
             const email = (emailInput ? emailInput.value : "").trim();
@@ -57,77 +60,102 @@ CONTACT_JS = """
             const msg = (messageInput ? messageInput.value : "").trim();
 
             if (!topic || !email || !company || !msg) {
-                alert("Please fill in all inquiry fields before transmitting.");
+                alert("Please complete all inquiry fields before transmitting.");
                 return;
             }
 
-            const subject = topic;
-            const fullBody = "AGENCY / ORGANIZATION:\\n" + company + "\\n\\n" +
-                             "CONTACT EMAIL:\\n" + email + "\\n\\n" +
-                             "SCOPE OF INQUIRY:\\n" + msg + "\\n\\n" +
-                             "---\\nTransmitted securely via Chroma Labs Institutional Portal (chromalabs.cc)";
+            const origBtnText = submitBtn ? submitBtn.innerText : "TRANSMIT TO LEAD ARCHITECT";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = "TRANSMITTING...";
+                submitBtn.style.opacity = "0.7";
+            }
 
-            lastFormattedText = "TO: michael@chromalabs.cc\\nSUBJECT: " + subject + "\\n\\n" + fullBody;
-            lastMailtoUrl = "mailto:michael@chromalabs.cc?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(fullBody);
+            lastRecordText = `INSTITUTIONAL COMMUNIQUE RECORD\\n` +
+                             `RECIPIENT: michael@chromalabs.cc\\n` +
+                             `SUBJECT: ${topic}\\n` +
+                             `AGENCY / ORGANIZATION: ${company}\\n` +
+                             `SENDER: ${email}\\n\\n` +
+                             `SCOPE OF INQUIRY:\\n${msg}\\n\\n` +
+                             `---\\nTransmitted via Chroma Labs Portal (chromalabs.cc)`;
 
-            // Dispatch to visitor's default email client
+            let sentDirectly = false;
+
             try {
-                window.location.href = lastMailtoUrl;
-            } catch (err) {}
+                const response = await fetch(FORMSPREE_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        _subject: `[Institutional Inquiry] ${topic} (${company})`,
+                        topic: topic,
+                        email: email,
+                        company: company,
+                        message: msg,
+                    })
+                });
 
-            // Reveal confirmation card
-            if (statusBox) {
+                if (response.ok) {
+                    sentDirectly = true;
+                }
+            } catch (err) {
+                console.warn("Background transmission error, using client fallback:", err);
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = origBtnText;
+                submitBtn.style.opacity = "1";
+            }
+
+            if (sentDirectly) {
+                // Success - sent directly in background!
+                if (statusTitle) statusTitle.innerText = "✓ COMMUNIQUE TRANSMITTED DIRECTLY";
+                if (statusMsg) statusMsg.innerText = "Your communique has been delivered directly to Lead Architect Michael Reser (michael@chromalabs.cc). Institutional materials and bilateral NDA workflows are initiated following verification of credentials.";
+                if (statusActions) statusActions.style.display = "flex";
                 form.style.display = "none";
-                statusBox.style.display = "block";
+                if (statusBox) statusBox.style.display = "block";
+            } else {
+                // Fallback to mailto client dispatch
+                const mailtoUrl = "mailto:michael@chromalabs.cc?subject=" + encodeURIComponent(topic) + "&body=" + encodeURIComponent(lastRecordText);
+                try {
+                    window.location.href = mailtoUrl;
+                } catch (e) {}
+
+                if (statusTitle) statusTitle.innerText = "COMMUNIQUE PREPARED";
+                if (statusMsg) statusMsg.innerText = "Direct gateway was unreachable; your default email client was dispatched with your pre-filled inquiry. You can also copy the record below.";
+                if (statusActions) statusActions.style.display = "flex";
+                form.style.display = "none";
+                if (statusBox) statusBox.style.display = "block";
             }
         });
 
-        if (openBtn && !openBtn.__bound) {
-            openBtn.__bound = true;
-            openBtn.addEventListener("click", function(e) {
+        if (copyRecordBtn && !copyRecordBtn.__bound) {
+            copyRecordBtn.__bound = true;
+            copyRecordBtn.addEventListener("click", function(e) {
                 e.preventDefault();
-                if (lastMailtoUrl) {
-                    window.location.href = lastMailtoUrl;
-                }
-            });
-        }
-
-        if (copyBtn && !copyBtn.__bound) {
-            copyBtn.__bound = true;
-            copyBtn.addEventListener("click", function(e) {
-                e.preventDefault();
-                if (lastFormattedText) {
-                    navigator.clipboard.writeText(lastFormattedText).then(function() {
-                        const origText = copyBtn.innerText;
-                        copyBtn.innerText = "✓ COMMUNIQUE COPIED!";
-                        copyBtn.style.borderColor = "#DFBC61";
-                        copyBtn.style.color = "#DFBC61";
+                if (lastRecordText) {
+                    navigator.clipboard.writeText(lastRecordText).then(function() {
+                        const orig = copyRecordBtn.innerText;
+                        copyRecordBtn.innerText = "✓ COPIED TO CLIPBOARD";
+                        copyRecordBtn.style.color = "#DFBC61";
                         setTimeout(function() {
-                            copyBtn.innerText = origText;
-                            copyBtn.style.borderColor = "";
-                            copyBtn.style.color = "";
-                        }, 2500);
-                    }).catch(function() {
-                        const ta = document.createElement("textarea");
-                        ta.value = lastFormattedText;
-                        document.body.appendChild(ta);
-                        ta.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(ta);
-                        copyBtn.innerText = "✓ COMMUNIQUE COPIED!";
-                        setTimeout(function() {
-                            copyBtn.innerText = "COPY COMMUNIQUE";
+                            copyRecordBtn.innerText = orig;
+                            copyRecordBtn.style.color = "";
                         }, 2500);
                     });
                 }
             });
         }
 
-        if (editBtn && !editBtn.__bound) {
-            editBtn.__bound = true;
-            editBtn.addEventListener("click", function(e) {
+        if (resetBtn && !resetBtn.__bound) {
+            resetBtn.__bound = true;
+            resetBtn.addEventListener("click", function(e) {
                 e.preventDefault();
-                if (statusBox && form) {
+                if (form && statusBox) {
+                    form.reset();
                     statusBox.style.display = "none";
                     form.style.display = "block";
                 }
@@ -233,40 +261,24 @@ def contact() -> rx.Component:
                     # Status confirmation card (revealed on submit)
                     rx.box(
                         rx.vstack(
-                            rx.text("✓ COMMUNIQUE GENERATED", font_size="0.85rem", font_weight="bold", color="#DFBC61", letter_spacing="0.1em", font_family="JetBrains Mono, monospace"),
+                            rx.text("✓ COMMUNIQUE TRANSMITTED DIRECTLY", id="contactStatusTitle", font_size="0.85rem", font_weight="bold", color="#DFBC61", letter_spacing="0.1em", font_family="JetBrains Mono, monospace"),
                             rx.text(
-                                "Your inquiry has been formatted for michael@chromalabs.cc. Your system email client has been dispatched.",
+                                "Your communique has been delivered directly to Lead Architect Michael Reser (michael@chromalabs.cc). Institutional materials and bilateral NDA workflows are initiated following verification of credentials.",
+                                id="contactStatusMsg",
                                 font_size=["0.78rem", "0.85rem"],
                                 color="white",
                                 text_align="center",
-                                line_height="1.4"
-                            ),
-                            rx.text(
-                                "If your mail app did not open automatically, launch it or copy the full communique directly below:",
-                                font_size=["0.68rem", "0.72rem"],
-                                color="slate.10",
-                                text_align="center",
-                                font_family="JetBrains Mono, monospace"
+                                line_height="1.45"
                             ),
                             rx.hstack(
-                                primary_gold_button("LAUNCH EMAIL CLIENT", id="contactOpenClientBtn", size="2", font_size="0.75rem", padding="10px 16px"),
-                                secondary_white_button("COPY COMMUNIQUE", id="contactCopyBtn", size="2", font_size="0.75rem", padding="10px 16px"),
+                                secondary_white_button("COPY COMMUNIQUE RECORD", id="contactCopyRecordBtn", size="2", font_size="0.75rem", padding="10px 16px"),
+                                primary_gold_button("TRANSMIT ANOTHER INQUIRY", id="contactResetBtn", size="2", font_size="0.75rem", padding="10px 16px"),
+                                id="contactStatusActions",
                                 spacing="3",
                                 justify_content="center",
                                 flex_wrap="wrap",
                                 width="100%",
-                                margin_top="2"
-                            ),
-                            rx.text(
-                                "← Edit Communique",
-                                id="contactEditBtn",
-                                cursor="pointer",
-                                font_size="0.75rem",
-                                color="slate.11",
-                                font_family="JetBrains Mono, monospace",
-                                text_align="center",
-                                margin_top="3",
-                                _hover={"color": "#DFBC61", "text_decoration": "underline"}
+                                margin_top="3"
                             ),
                             spacing="3",
                             align_items="center",
