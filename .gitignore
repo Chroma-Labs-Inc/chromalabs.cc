@@ -28,6 +28,7 @@ ENV/
 reflex.lock/
 .states
 *.db
+scratch/
 
 # Node
 node_modules/

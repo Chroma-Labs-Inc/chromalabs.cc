@@ -8,18 +8,18 @@ def papers() -> rx.Component:
             rx.vstack(
                 rx.text(
                     "ACADEMIC & DEFENSE PUBLICATIONS",
-                    font_size="0.75rem", weight="bold", color="#DFBC61", letter_spacing="0.15em",
+                    font_size=["0.65rem", "0.75rem"], weight="bold", color="#DFBC61", letter_spacing="0.15em",
                     class_name="animate-fade-up", text_align="center", font_family="JetBrains Mono, monospace"
                 ),
                 rx.text(
                     "Formal Manuscripts & Proof Suites.", 
-                    font_size=["1.8rem", "2.2rem", "2.6rem"], weight="bold", letter_spacing="-0.03em", line_height="1.1",
+                    font_size=["1.6rem", "2.0rem", "2.6rem"], weight="bold", letter_spacing="-0.03em", line_height="1.1",
                     color="white", font_family="'EB Garamond', 'Playfair Display', serif",
                     class_name="animate-fade-up delay-100", margin_bottom="2", text_align="center"
                 ),
                 rx.text(
                     "Theoretical derivations, Lean 4 machine-checked proofs, and physical telemetry manuscripts.",
-                    font_size="0.9rem", color="slate.11", max_width="680px", text_align="center", margin_bottom="4", line_height="1.5",
+                    font_size=["0.82rem", "0.9rem"], color="slate.11", max_width="680px", text_align="center", margin_bottom=["3", "4"], line_height="1.5",
                     class_name="animate-fade-up delay-200"
                 ),
                 # Institutional Placeholder Card
@@ -27,7 +27,7 @@ def papers() -> rx.Component:
                     rx.vstack(
                         rx.hstack(
                             rx.icon(tag="file-lock-2", color="#DFBC61", size=18),
-                            rx.text("CONTROLLED SCIENTIFIC ARCHIVE // INSTITUTIONAL CLEARANCE", font_family="JetBrains Mono, monospace", font_size="0.75rem", font_weight="bold", color="#DFBC61", letter_spacing="0.1em"),
+                            rx.text("CONTROLLED SCIENTIFIC ARCHIVE // INSTITUTIONAL CLEARANCE", font_family="JetBrains Mono, monospace", font_size=["0.65rem", "0.75rem"], font_weight="bold", color="#DFBC61", letter_spacing="0.1em"),
                             rx.spacer(),
                             rx.badge("ITAR / BILATERAL NDA", color_scheme="amber", variant="surface", size="1"),
                             width="100%",
@@ -36,7 +36,7 @@ def papers() -> rx.Component:
                         ),
                         rx.text(
                             "Scientific Manuscripts Withheld from Public Dissemination",
-                            font_size=["1.1rem", "1.25rem"],
+                            font_size=["1.05rem", "1.25rem"],
                             font_weight="bold",
                             color="white",
                             font_family="'EB Garamond', 'Playfair Display', serif",
@@ -45,7 +45,7 @@ def papers() -> rx.Component:
                         ),
                         rx.text(
                             "Chroma Labs withholds academic preprints, mathematical derivations, and machine-checked Lean 4 verification suites from unrestricted public repositories. Core theoretical assets remain governed under strict security protocols and federal defense export compliance (ITAR / EAR). Formal papers, proof suites, and validation telemetry are provisioned strictly upon execution of an institutional bilateral Non-Disclosure Agreement (NDA), verified defense clearance, or as findings become cleared and declassified for public consumption.",
-                            font_size="0.84rem",
+                            font_size=["0.8rem", "0.84rem"],
                             color="slate.11",
                             line_height="1.6",
                             margin_bottom="3",
@@ -66,7 +66,7 @@ def papers() -> rx.Component:
                                 rx.text("Defense Side-Channel Immunity", font_family="JetBrains Mono, monospace", font_size="0.72rem", color="slate.12"),
                                 spacing="2", align_items="center",
                             ),
-                            spacing="4",
+                            spacing="3",
                             wrap="wrap",
                             margin_bottom="4",
                             padding="8px 14px",
@@ -79,7 +79,7 @@ def papers() -> rx.Component:
                             primary_gold_button(
                                 rx.hstack(
                                     rx.icon(tag="scroll-text", size=15),
-                                    rx.text("REQUEST ACADEMIC & DEFENSE MANUSCRIPTS", font_size="0.78rem", font_family="JetBrains Mono, monospace", font_weight="bold"),
+                                    rx.text("REQUEST ACADEMIC & DEFENSE MANUSCRIPTS", font_size=["0.66rem", "0.78rem"], font_family="JetBrains Mono, monospace", font_weight="bold"),
                                     rx.icon(tag="arrow-right", size=15),
                                     spacing="2",
                                     align_items="center",
@@ -104,7 +104,7 @@ def papers() -> rx.Component:
                         width="100%",
                         align_items="flex-start",
                     ),
-                    padding=["20px 22px", "24px 28px"],
+                    padding=["16px 14px", "24px 28px"],
                     background="rgba(10, 10, 14, 0.75)",
                     border="1px solid rgba(223, 188, 97, 0.2)",
                     border_radius="8px",
@@ -115,13 +115,16 @@ def papers() -> rx.Component:
                 ),
                 width="100%",
                 max_width="900px",
-                align_items="center", justify_content="center",
+                align_items="center",
                 padding_x=["4", "6", "8"],
+                padding_top=["20px", "24px", "0px", "0px"],
+                padding_bottom=["80px", "80px", "0px", "0px"],
             ),
             width="100%",
-            height="100%",
+            min_height="100%",
             display="flex",
+            flex_direction="column",
             align_items="center",
-            justify_content="center"
+            justify_content=["flex-start", "flex-start", "center", "center"],
         )
     )

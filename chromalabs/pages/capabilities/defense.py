@@ -4,13 +4,13 @@ from chromalabs.components.layout import base_layout
 def feature_card(icon_tag: str, title: str, description: str) -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.icon(tag=icon_tag, color="#DFBC61", size=24, margin_bottom="2"),
-            rx.text(title, font_size="1.1rem", font_weight="bold", color="white", margin_bottom="2", line_height="1.2"),
-            rx.text(description, color="slate.11", font_size="0.85rem", line_height="1.55"),
+            rx.icon(tag=icon_tag, color="#DFBC61", size=22, margin_bottom="1"),
+            rx.text(title, font_size=["1.0rem", "1.1rem"], font_weight="bold", color="white", margin_bottom="1", line_height="1.2"),
+            rx.text(description, color="slate.11", font_size=["0.78rem", "0.85rem"], line_height="1.5"),
             align_items="flex-start",
             height="100%",
         ),
-        padding="20px 22px",
+        padding=["14px 16px", "16px 18px", "20px 22px"],
         background="rgba(10, 10, 14, 0.6)",
         border="1px solid rgba(255, 255, 255, 0.06)",
         border_radius="8px",
@@ -23,14 +23,14 @@ def defense() -> rx.Component:
     return base_layout(
         rx.box(
             rx.vstack(
-                rx.text("SOVEREIGN DEFENSE & SECURITY", font_family="JetBrains Mono, monospace", font_size="0.75rem", color="#DFBC61", margin_bottom="1", letter_spacing="0.15em", class_name="animate-fade-up"),
+                rx.text("SOVEREIGN DEFENSE & SECURITY", font_family="JetBrains Mono, monospace", font_size=["0.65rem", "0.75rem"], color="#DFBC61", margin_bottom="1", letter_spacing="0.15em", class_name="animate-fade-up"),
                 rx.text(
                     "Defense & Security.", 
-                    font_size=["2.0rem", "2.6rem", "3.2rem"], font_weight="800", line_height="1.1", color="white", letter_spacing="-0.03em", margin_bottom="2", text_align="center", font_family="'EB Garamond', 'Playfair Display', serif", class_name="animate-fade-up delay-100"
+                    font_size=["1.6rem", "2.2rem", "2.8rem"], font_weight="800", line_height="1.1", color="white", letter_spacing="-0.03em", margin_bottom="2", text_align="center", font_family="'EB Garamond', 'Playfair Display', serif", class_name="animate-fade-up delay-100"
                 ),
                 rx.text(
                     "Sovereign computing architectures engineered under USML Category XI compliance. Delivering physical-layer cryptographic isolation, sub-ambient electromagnetic emissions, and uncontested edge superiority in contested peer-adversary environments.",
-                    color="slate.11", font_size="0.95rem", line_height="1.55", max_width="760px", text_align="center", margin_bottom="4", class_name="animate-fade-up delay-200"
+                    color="slate.11", font_size=["0.82rem", "0.9rem", "0.95rem"], line_height="1.55", max_width="760px", text_align="center", margin_bottom=["3", "4"], class_name="animate-fade-up delay-200"
                 ),
                 rx.grid(
                     feature_card(
@@ -54,7 +54,7 @@ def defense() -> rx.Component:
                         "Real-time tactical processing directly at the physical point of need without reliance on vulnerable satellite communication networks or high-latency cloud architectures."
                     ),
                     grid_template_columns=["1fr", "repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(4, 1fr)"],
-                    gap="4",
+                    gap="3",
                     width="100%",
                     max_width="1200px",
                     class_name="animate-fade-up delay-300"
@@ -66,7 +66,7 @@ def defense() -> rx.Component:
                     ),
                     rx.text(
                         "ITAR / USML COMPLIANCE: Architectural briefings, test telemetry, and hardware evaluations are provisioned strictly to verified US defense entities, allied primes, and program offices under bilateral non-disclosure agreement.",
-                        font_size="0.7rem",
+                        font_size=["0.65rem", "0.7rem"],
                         color="slate.9",
                         max_width="740px",
                         margin_top="2",
@@ -78,10 +78,16 @@ def defense() -> rx.Component:
                     class_name="animate-fade-up delay-400"
                 ),
                 align_items="center",
-                justify_content="center",
                 width="100%",
                 padding_x=["4", "6", "8"],
+                padding_top=["20px", "24px", "0px", "0px"],
+                padding_bottom=["80px", "80px", "0px", "0px"],
             ),
-            width="100%", height="100%", display="flex", align_items="center", justify_content="center"
+            width="100%",
+            min_height="100%",
+            display="flex",
+            flex_direction="column",
+            align_items="center",
+            justify_content=["flex-start", "flex-start", "center", "center"],
         )
     )

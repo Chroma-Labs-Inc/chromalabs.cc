@@ -378,8 +378,10 @@ def chroma_crystal() -> rx.Component:
             id="chromaHeroCrystal",
             class_name="chroma-hero-crystal-canvas",
             style={
-                "width": "300px",
-                "height": "200px",
+                "width": "100%",
+                "maxWidth": "280px",
+                "height": "auto",
+                "aspectRatio": "3 / 2",
                 "display": "block",
                 "margin": "0 auto",
                 "pointer_events": "none",
@@ -391,7 +393,7 @@ def chroma_crystal() -> rx.Component:
         justify_content="center",
         align_items="center",
         width="100%",
-        height="200px",
+        height=["130px", "160px", "190px"],
         position="relative",
         z_index="10",
     )

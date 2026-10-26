@@ -103,7 +103,6 @@ def directory() -> rx.Component:
                 width="100%",
                 max_width="1220px",
                 align_items="center",
-                justify_content="center",
                 padding_x=["4", "6", "8"],
                 padding_top=["20px", "24px", "0px", "0px"],
                 padding_bottom=["80px", "80px", "0px", "0px"],
@@ -111,6 +110,7 @@ def directory() -> rx.Component:
             width="100%",
             min_height="100%",
             display="flex",
+            flex_direction="column",
             align_items="center",
             justify_content=["flex-start", "flex-start", "center", "center"],
         )
