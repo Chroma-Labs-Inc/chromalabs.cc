@@ -59,6 +59,12 @@ def directory() -> rx.Component:
                         linkedin="https://www.linkedin.com/in/cowardbryan/"
                     ),
                     staff_card(
+                        "Jacob Gardner", 
+                        "Chief Operating Officer (COO)", 
+                        "Operations executive and emerging-technology incubator founder. Drawing on leadership across the Ethereum Foundation, SWARM, Tech Dreams, and the Church of Ascension Technologies, along with technical project management and systems infrastructure, Gardner directs day-to-day enterprise operations and organizational scaling across Chroma Labs.",
+                        linkedin="https://www.linkedin.com/in/jacobgardner770/"
+                    ),
+                    staff_card(
                         "Connor Dudek", 
                         "Chief Marketing Officer (CMO)", 
                         "Directs corporate positioning, high-velocity brand architecture, strategic communications, and institutional market alignment across global technology sectors.",
@@ -69,7 +75,7 @@ def directory() -> rx.Component:
                         "Secretary of the Board", 
                         "Directs corporate governance, intellectual property compliance, and strategic administration across Chroma Labs' operations and sovereign defense contracts.",
                     ),
-                    grid_template_columns=["1fr", "repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(4, 1fr)"],
+                    grid_template_columns=["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)", "repeat(5, 1fr)"],
                     spacing="3",
                     width="100%",
                     max_width="1220px",
