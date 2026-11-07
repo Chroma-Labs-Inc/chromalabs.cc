@@ -340,6 +340,50 @@ CRYSTAL_JS = """
         ctx.restore();
     }
 
+    let favCanvas = null;
+    let favTick = 0;
+
+    function updateLiveFavicon() {
+        try {
+            if (!favCanvas) {
+                favCanvas = document.createElement("canvas");
+            }
+            // Render the exact 15x11 LoD nav crystal into an offscreen canvas
+            renderEngine(favCanvas, true);
+
+            // Center into a square 64x64 favicon canvas so browser tabs don't stretch the aspect ratio
+            let sq = document.getElementById("__chromaFaviconCanvas");
+            if (!sq) {
+                sq = document.createElement("canvas");
+                sq.id = "__chromaFaviconCanvas";
+                sq.width = 64;
+                sq.height = 64;
+            }
+            const sctx = sq.getContext("2d");
+            if (!sctx) return;
+            sctx.clearRect(0, 0, 64, 64);
+            // Draw the 48x34 (scaled by dpr) crystal centered inside 64x64
+            const drawW = 64;
+            const drawH = Math.round(64 * (34 / 48));
+            const offsetY = Math.round((64 - drawH) / 2);
+            sctx.drawImage(favCanvas, 0, 0, favCanvas.width, favCanvas.height, 0, offsetY, drawW, drawH);
+
+            const dataUrl = sq.toDataURL("image/png");
+            let icons = document.querySelectorAll("link[rel*='icon']");
+            if (icons.length === 0) {
+                const link = document.createElement("link");
+                link.rel = "icon";
+                link.type = "image/png";
+                document.head.appendChild(link);
+                icons = [link];
+            }
+            icons.forEach(function(link) {
+                link.type = "image/png";
+                link.href = dataUrl;
+            });
+        } catch (e) {}
+    }
+
     window.__chromaCrystalRenderAll = function() {
         try {
             const heroes = document.querySelectorAll(".chroma-hero-crystal-canvas, #chromaHeroCrystal");
@@ -353,9 +397,15 @@ CRYSTAL_JS = """
     function animate() {
         angle += 0.0055;
         pulsePhase += 0.015;
+        favTick++;
 
         if (window.__chromaCrystalRenderAll) {
             window.__chromaCrystalRenderAll();
+        }
+
+        // Update animated tab favicon at ~15 FPS (every 4th frame) for smooth rotation with zero browser lag
+        if (favTick % 4 === 1) {
+            updateLiveFavicon();
         }
 
         requestAnimationFrame(animate);
@@ -368,6 +418,7 @@ CRYSTAL_JS = """
 
     if (window.__chromaCrystalRenderAll) {
         window.__chromaCrystalRenderAll();
+        updateLiveFavicon();
     }
 })();
 """

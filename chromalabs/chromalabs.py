@@ -52,10 +52,9 @@ app = rx.App(
         }
     },
     head_components=[
-        rx.el.link(rel="icon", href="/logo_glyph.svg?v=2", type="image/svg+xml"),
-        rx.el.link(rel="icon", href="/logo_glyph.png?v=2", type="image/png", sizes="512x512"),
-        rx.el.link(rel="shortcut icon", href="/favicon.ico?v=2", type="image/x-icon"),
-        rx.el.link(rel="apple-touch-icon", href="/logo_glyph.png?v=2"),
+        rx.el.link(rel="icon", href="/logo_glyph.png?v=3", type="image/png", sizes="512x512"),
+        rx.el.link(rel="shortcut icon", href="/favicon.ico?v=3", type="image/x-icon"),
+        rx.el.link(rel="apple-touch-icon", href="/logo_glyph.png?v=3"),
         rx.el.link(rel="stylesheet", href="/style.css"),
     ],
 )
