@@ -64,6 +64,14 @@ def directory() -> rx.Component:
                         "Operations executive and emerging-technology incubator founder. Drawing on leadership across the Ethereum Foundation, SWARM, Tech Dreams, and the Church of Ascension Technologies, along with technical project management and systems infrastructure, Gardner directs day-to-day enterprise operations and organizational scaling across Chroma Labs.",
                         linkedin="https://www.linkedin.com/in/jacobgardner770/"
                     ),
+                    grid_template_columns=["1fr", "1fr", "repeat(3, 1fr)"],
+                    spacing="3",
+                    width="100%",
+                    max_width="1180px",
+                    class_name="animate-fade-up delay-200",
+                    margin_bottom="3"
+                ),
+                rx.grid(
                     staff_card(
                         "Connor Dudek", 
                         "Chief Marketing Officer (CMO)", 
@@ -75,12 +83,12 @@ def directory() -> rx.Component:
                         "Secretary of the Board", 
                         "Directs corporate governance, intellectual property compliance, and strategic administration across Chroma Labs' operations and sovereign defense contracts.",
                     ),
-                    grid_template_columns=["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)", "repeat(5, 1fr)"],
+                    grid_template_columns=["1fr", "repeat(2, 1fr)"],
                     spacing="3",
                     width="100%",
-                    max_width="1220px",
+                    max_width="780px",
                     class_name="animate-fade-up delay-200",
-                    margin_bottom=["2", "3"]
+                    margin_bottom=["4", "5"]
                 ),
                 rx.text(
                     "ADVISORY COUNCIL",
@@ -103,21 +111,22 @@ def directory() -> rx.Component:
                     grid_template_columns=["1fr", "repeat(2, 1fr)"],
                     spacing="3",
                     width="100%",
-                    max_width="750px",
+                    max_width="780px",
                     class_name="animate-fade-up delay-300"
                 ),
                 width="100%",
                 max_width="1220px",
                 align_items="center",
                 padding_x=["4", "6", "8"],
-                padding_top=["20px", "24px", "0px", "0px"],
-                padding_bottom=["80px", "80px", "0px", "0px"],
+                padding_top=["24px", "28px", "32px", "36px"],
+                padding_bottom=["80px", "80px", "48px", "48px"],
+                margin_y="auto",
             ),
             width="100%",
             min_height="100%",
             display="flex",
             flex_direction="column",
             align_items="center",
-            justify_content=["flex-start", "flex-start", "center", "center"],
+            justify_content="flex-start",
         )
     )
