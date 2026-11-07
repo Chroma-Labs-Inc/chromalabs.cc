@@ -333,7 +333,7 @@ def base_layout(content: rx.Component) -> rx.Component:
                 flex_direction="column",
                 align_items="center",
                 justify_content=["flex-start", "flex-start", "center", "center"],
-                overflow_y="auto",
+                overflow_y=["auto", "auto", "hidden", "hidden"],
                 overflow_x="hidden",
             ),
             footer(),
